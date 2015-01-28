@@ -1,4 +1,62 @@
+#__init__.py
+
+from flask import Flask
+
+app=Flask(__name__)
+app.secret_key='asdfasdff'
+app.config['SQLALCHEMY_ECHO']=True
+app.config['SQLALCHEMY_DATABASE_URI']= 'postgresql://ubuntu:p.rogramming@localhost/ubuntu'
+#WARNING : change p.rogramming to your psql password
+
+from controller import *
 
 
 
-dfjaksdfj:
+#controller.py
+
+from flask import request, render_template, session, redirect, url_for, flash
+from flask.ext.sqlalchemy import SQLAlchemy
+
+from __init__ import app
+
+db= SQLAlchemy(app)
+	
+from models import *
+
+
+@app.route('/')
+def index():
+	return render_template('index.html')
+
+
+
+#models.py
+
+from controller import db
+
+
+class User(db.Model):
+	__tablename__= 'users'
+
+	id= db.Column(db.Integer, primary_key=True)
+	username= db.Column(db.String(), unique=True, nullable=False)
+	password= db.Column(db.String(), nullable=False)
+	email= db.Column(db.String(), unique=True)
+
+	def __init__(self, username, password, email):
+		self.username=username
+		self.password=password
+		self.email=email
+
+	def __repr__(self):
+		return "<E-mail %s>" % self.email
+
+
+
+#run.py
+
+
+from __init__ import app
+
+if __name__ == '__main__':
+	app.run(debug=True, host='0.0.0.0')
